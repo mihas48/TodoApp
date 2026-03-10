@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="TodoApp.MainPage">
+             x:Class="TodoApp.MainPage"
+             x:Name="RootPage">
 
     <ScrollView>
         <VerticalStackLayout Margin="200, 50">
@@ -13,15 +14,33 @@
                         CommandParameter="{Binding Text, Source={x:Reference entryForNewListItem}}"/>
             </Grid>
             <!-- Пространоство для активных задач -->
-            <VerticalStackLayout Margin="0, 20">
-                <Border Stroke="Gray" HeightRequest="400">
-                </Border>
-            </VerticalStackLayout>
-            <!-- Пространство для выполненных задач -->
-            <VerticalStackLayout Margin="0, 5">
-                <Border Stroke="Gray" HeightRequest="400">
-                </Border>
-            </VerticalStackLayout>
+            <Border Stroke="Gray" HeightRequest="400">
+                <CollectionView ItemsSource="{Binding UncompletedListItems}"
+                          Margin="0,20">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="*, auto">
+                                <Label Text="{Binding Text}" 
+                               FontSize="16"
+                               Margin="10" Grid.Column="0"/>
+                                <Button Command="{Binding BindingContext.CompleteListItemCommand, Source={x:Reference RootPage}}" 
+                                        CommandParameter="{Binding .}" Grid.Column="1"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Border>
+                <!-- Пространство для выполненных задач -->
+            <Border Stroke="Gray" HeightRequest="400">
+                <CollectionView ItemsSource="{Binding CompletedListItems}"
+                                Margin="0,20">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label Text="{Binding Text}" FontSize="16" Margin="10"/>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Border>
         </VerticalStackLayout>
     </ScrollView>
 

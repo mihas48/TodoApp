@@ -1,4 +1,7 @@
-﻿namespace TodoApp.Classes
+﻿using System.Windows.Input;
+using TodoApp.ViewModels;
+
+namespace TodoApp.Classes
 {
     public class ListItem
     {

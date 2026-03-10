@@ -8,21 +8,29 @@ namespace TodoApp.ViewModels
     public class MainViewModel
     {
         //переменные для хранения элементов завершённых и незавершённых списков
-        public ObservableCollection<ListItem> uncompletedListItems = new ObservableCollection<ListItem>();
-        public ObservableCollection<ListItem> completedListItems = new ObservableCollection<ListItem>();
+        public ObservableCollection<ListItem> UncompletedListItems { get; set; } = new ObservableCollection<ListItem>();
+        public ObservableCollection<ListItem> CompletedListItems { get; set; } = new ObservableCollection<ListItem>();
 
         public ICommand AddNewListItemCommand { get; }
+        public ICommand CompleteListItemCommand { get; }
+
 
         public MainViewModel()
         {
-            AddNewListItemCommand = new RelayCommand(AddNewListItem);
+            AddNewListItemCommand = new RelayCommand(AddNewListItemAsync);
+            CompleteListItemCommand = new RelayCommand(CompleteListItem);
         }
 
-        private void AddNewListItem(object parameter)
+        private async void AddNewListItemAsync(object parameter)
         {
-            string textListItem = parameter.ToString() ?? throw new ArgumentException("Ошибка! Значение для поля текста не может быть пустым!");
+            string? listItemText = (parameter as string)?.Trim();
+            if (string.IsNullOrWhiteSpace(listItemText))
+            {
+                await Application.Current.MainPage.DisplayAlert("Ошибка", "Введите текст задачи!", "OK");
+                return;
+            }
 
-            uncompletedListItems.Add(new ListItem(textListItem));
+            UncompletedListItems.Insert(0, new ListItem(listItemText));
         }
 
         private void CompleteListItem(object parameter)
@@ -30,8 +38,8 @@ namespace TodoApp.ViewModels
             //проверка на то, что параметр, переданный в метод является объектом типа ListItem и если так, то создаётся объект task
             if (parameter is ListItem task)
             {
-                uncompletedListItems.Remove(task);
-                completedListItems.Add(task);
+                UncompletedListItems.Remove(task);
+                CompletedListItems.Insert(0, task);
             }
         }
     }
